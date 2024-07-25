@@ -50,13 +50,14 @@ class DeepfakeDataset(Dataset):
                 continue
             for r, _, filename in sorted(os.walk(d, followlinks=True)):
                 for name in sorted(filename):
-                    path = os.path.join(r, name)
+                    path = os.path.join(r, name).replace('\\', '/')
                     info_key = path[:-4]
                     video_name = '/'.join(path.split('/')[:-1])
                     info_meta = self.info_meta_dict[info_key]
                     landmark = info_meta['landmark']
                     class_label = int(info_meta['label'])
                     source_path = info_meta['source_path'] + path[-4:]
+                    source_path = source_path.replace('\\', '/')
                     samples.append(
                         (path, {'labels': class_label, 'landmark': landmark,
                                 'source_path': source_path,
