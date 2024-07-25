@@ -11,7 +11,7 @@ from imutils import face_utils
 
 
 VIDEO_PATH = "/datadrive/collated"
-SAVE_IMGS_PATH = "./test_images"
+SAVE_IMGS_PATH = "/datadrive/test_images"
 PREDICTOR_PATH = "./lib/shape_predictor_81_face_landmarks.dat"
 DATASETS = {'Test'}
 COMPRESSION = {'raw'}
