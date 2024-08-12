@@ -6,21 +6,22 @@ from tqdm import tqdm
 import numpy as np
 import dlib
 import json
-import argparse
+import yaml
 from imutils import face_utils
 
+with open('./configs/caddm_test.cfg', 'r') as f:
+    config = yaml.safe_load(f)
 
-VIDEO_PATH = "/datadrive/collated"
-SAVE_IMGS_PATH = "/datadrive/test_images"
+VIDEO_PATH = config['dataset']['video_path']
+SAVE_IMGS_PATH = config['dataset']['img_path']
+NUM_FRAMES = config['num_frames']
 PREDICTOR_PATH = "./lib/shape_predictor_81_face_landmarks.dat"
+START_FROM = config['dataset']['start_from']
 DATASETS = {'Test'}
-COMPRESSION = {'raw'}
-NUM_FRAMES = 100
 IMG_META_DICT = dict()
 
 
-def parse_video_path(dataset, compression):
-    # this path setting follows UADFV dataset
+def parse_video_path(dataset):
     if dataset == 'Test':
         dataset_path = f'{VIDEO_PATH}/'
     else:
@@ -71,6 +72,9 @@ def preprocess_video(video_path, save_path, face_detector, face_predictor):
     # process each frame
     for cnt_frame in range(frame_count_video):
         ret, frame = cap_video.read()
+        if frame is None:
+            tqdm.write('Missing frame')
+            continue
         height, width = frame.shape[:-1]
         if not ret:
             tqdm.write('Frame read {} Error! : {}'.format(cnt_frame, os.path.basename(video_path)))
@@ -99,7 +103,7 @@ def preprocess_video(video_path, save_path, face_detector, face_predictor):
         video_dict['landmark'] = landmarks.tolist()
         video_dict['source_path'] = f"{source_save_path}/frame_{cnt_frame}"
         video_dict['label'] = label
-        IMG_META_DICT[f"{save_path}/frame_{cnt_frame}"] = video_dict
+        IMG_META_DICT[f"{save_path}/frame_{cnt_frame}".replace('\\', '/')] = video_dict
         # save one frame
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         image_path = f"{save_path}/frame_{cnt_frame}.png"
@@ -112,17 +116,21 @@ def main():
     face_detector = dlib.get_frontal_face_detector()
     face_predictor = dlib.shape_predictor(PREDICTOR_PATH)
     for dataset in DATASETS:
-        for comp in COMPRESSION:
-            movies_path_list = parse_video_path(dataset, comp)
-            n_sample = len(movies_path_list)
-            for i in tqdm(range(n_sample)):
-                save_path_per_video = movies_path_list[i].replace(
-                    VIDEO_PATH, SAVE_IMGS_PATH
-                ).replace('.mp4', '').replace("/videos", "/frames")
-                preprocess_video(
-                    movies_path_list[i], save_path_per_video,
-                    face_detector, face_predictor
-                )
+        movies_path_list = parse_video_path(dataset)
+        n_sample = len(movies_path_list)
+        for i in tqdm(range(n_sample)):
+            if i < START_FROM:
+                continue
+            save_path_per_video = movies_path_list[i].replace(
+                VIDEO_PATH, SAVE_IMGS_PATH
+            ).replace('.mp4', '').replace("/videos", "/frames")
+            preprocess_video(
+                movies_path_list[i], save_path_per_video,
+                face_detector, face_predictor
+            )
+            if i % 10 == 1:
+                with open(f"{SAVE_IMGS_PATH}/ldm.json", 'w') as f:
+                    json.dump(IMG_META_DICT, f)
     with open(f"{SAVE_IMGS_PATH}/ldm.json", 'w') as f:
         json.dump(IMG_META_DICT, f)
 

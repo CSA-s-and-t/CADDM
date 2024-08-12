@@ -1,3 +1,22 @@
+# Usage 
+
+1. Clone repository to folder
+2. Download the landmark detector from [here](https://github.com/codeniko/shape_predictor_81_face_landmarks) and put it in the folder *./lib*.
+3. Download weight for efficientnet [here](https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b4-6ed6700e.pth) into the folder *./data/efficientnet/*
+3. Download pretrained weights [here](https://drive.google.com/file/d/1JNMI4RGssgCOl9t05jkUa6imnw5XR5id/view?usp=sharing), and put the file efficientnet-b4.pkl into the folder *./checkpoints*
+4. Make appropriate configurations to the config file *./configs/caddm_test.cfg*, most importantly num_frames and dataset paths.
+5. Create a new anaconda environment by running the command in an anaconda terminal ```conda create -n CADDM python=3.7``` 
+6. Install the packages by running the command ```pip install -r requirements.txt``` from the root folder
+7. Install dlib by running the command ```conda install -c conda-forge dlib```
+
+### Step 1: Extracting frames from videos
+
+1. Extract frames by running the command ```python lib/extract_frames_ldm_4k.py``` from the root folder
+
+### Step 2: Processing the frames
+
+1. Process the frames by running the command ```python test.py```. The results will be outputted in the file TestSet_results.csv
+
 # Implicit Identity Leakage: The Stumbling Block to Improving Deepfake Detection Generalization
 
 This repo includes the authors' [Pytorch](https://pytorch.org/) implementation of the paper:
