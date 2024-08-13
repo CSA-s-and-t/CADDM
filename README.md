@@ -5,9 +5,10 @@
 3. Download weight for efficientnet [here](https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b4-6ed6700e.pth) into the folder *./data/efficientnet/*
 3. Download pretrained weights [here](https://drive.google.com/file/d/1JNMI4RGssgCOl9t05jkUa6imnw5XR5id/view?usp=sharing), and put the file efficientnet-b4.pkl into the folder *./checkpoints*
 4. Make appropriate configurations to the config file *./configs/caddm_test.cfg*, most importantly num_frames and dataset paths.
-5. Create a new anaconda environment by running the command in an anaconda terminal ```conda create -n CADDM python=3.7``` 
-6. Install the packages by running the command ```pip install -r requirements.txt``` from the root folder
-7. Install dlib by running the command ```conda install -c conda-forge dlib```
+5. Create a new anaconda environment by running the command in an anaconda terminal ```conda create -n CADDM python=3.7```
+6. Activate the environment: ```conda activate CAADM``` 
+7. Install the packages by running the command ```pip install -r requirements.txt``` from the root folder
+8. Install dlib by running the command ```conda install -c conda-forge dlib```
 
 ### Step 1: Extracting frames from videos
 
